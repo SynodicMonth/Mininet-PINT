@@ -2,7 +2,11 @@ import os
 import json
 import sys
 
-from p4utils.utils.topology import Topology
+
+import sys
+sys.path.append('/home/ubuntu/p4-utils-0.0/p4utils/p4utils')
+
+#from p4utils.utils.topology import Topology
 
 class TopoAllocator:
 	def __init__(self, length):
@@ -53,4 +57,4 @@ length=int(sys.argv[1])
 topo = TopoAllocator(length)
 topo.load_sample()
 topo.generate_topo()
-print "Run: sudo p4run --config p4app.json"
+print ("Run: sudo p4run --config p4app.json")

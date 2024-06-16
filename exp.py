@@ -4,7 +4,8 @@ import time
 import sys
 import networkx as nx
 
-from p4utils.utils.topology import Topology
+from p4utils.utils.helper import  load_topo
+from p4utils.utils import topology
 
 
 class Experiment:
@@ -47,26 +48,33 @@ class Experiment:
 			self.G.add_edge(node_1,node_2)
 
 	def obtain_mininet_topo(self):
-		topo = Topology(db="topology.db")
+		topo = load_topo("topology.json")
 		for switch in self.all_switches:
 			if switch not in self.switch_mapper:
 					self.switch_mapper[switch]={}
 
 			host=switch.replace("s","h")
-			host_details=topo.node(host)
-			ip_address=host_details[switch]["ip"].split("/")[0]
+			#host_details=topo.node(host)
+			#ip_address=host_details[switch]["ip"].split("/")[0]
+			ip_address=topo.get_host_ip(host)
 			self.host_ips[host]=ip_address
 
-			switch_details=topo.node(switch)
-			self.thrift_port[switch]=switch_details["thrift_port"]
+			#switch_details=topo.node(switch)
+			#self.thrift_port[switch]=switch_details["thrift_port"]
+			#print(topo.get_intfs())
+			switch_details=topo.get_intfs()[switch]
+			self.thrift_port[switch]=topo.get_thrift_port(switch)
+			#print(switch_details)
 
-			for interface,port in switch_details["interfaces_to_port"].iteritems():
-				if interface!="lo":
-					node=switch_details["interfaces_to_node"][interface]
-					self.switch_mapper[switch][node]=port
+
+			for nodename, details in switch_details.items():
+				if details["intfName"]!="lo":
+					node=nodename
+					self.switch_mapper[switch][node]=details["port"]
 
 
 	def generate_rules(self):
+		#print(self.switch_mapper)
 		for switch in self.all_switches:
 			host=switch.replace("s","h")
 			fw=open("rules/"+switch+"-commands.txt","w")
@@ -90,14 +98,14 @@ class Experiment:
 			max_ttl=30
 			fw.write("\n\n")
 			while ttl>0:
-					approx=self.global_hash_range/(256-ttl)
+					approx=self.global_hash_range//(256-ttl)
 					fw.write("table_add ttl_rules copy_to_metadata "
 					+str(ttl)+" => "+str(approx)+" "+str(switch_id)+" "
 					+str(self.max_bit_range)+"\n")
 					ttl=ttl-1
 			fw.close()
 
-		for node,port in self.thrift_port.iteritems():
+		for node,port in self.thrift_port.items():
 			os.system("simple_switch_CLI --thrift-port "
 			+str(port)+" < rules/"+str(node)
 			+"-commands.txt > /dev/null")
@@ -160,7 +168,7 @@ class Experiment:
 
 					os.system("sudo pkill -9 -f recv.py")
 					self.exp_count=self.exp_count+1
-					print "Exp range",exp_range,"Total runs",str(self.exp_count)+"/"+str(exp_range-1)+" Time",time.time()-start_time
+					print ("Exp range",exp_range,"Total runs",str(self.exp_count)+"/"+str(exp_range-1)+" Time",time.time()-start_time)
 					total_runs=total_runs-1
 				if total_runs==1:
 					self.all_done.add(exp_range)

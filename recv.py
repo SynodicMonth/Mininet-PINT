@@ -42,8 +42,8 @@ def parent_callback(queue):
 		chksum=ip_header.chksum
 		if ecn==1:
 			k=ttl
-			src_mac_int = int(src_mac.translate(None, ":.- "), 16)
-			dst_mac_int = int(dst_mac.translate(None, ":.- "), 16)
+			src_mac_int = int(src_mac.replace(":", "").replace(".", "").replace("-", "").replace(" ", ""), 16)
+			dst_mac_int = int(dst_mac.replace(":", "").replace(".", "").replace("-", "").replace(" ", ""), 16)
 			checksum=int(ip_header.chksum)
 			queue.put((k,pkt_id,src_mac_int,dst_mac_int,checksum))
 	return pkt_callback

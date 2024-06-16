@@ -170,7 +170,7 @@ for max_bit_range in [255,8,1]:
 
 
 				hop_location={}
-				for k_val,all_data in distance_metric.iteritems():
+				for k_val,all_data in distance_metric.items():
 					set_list=[]
 					for data in all_data:
 						digest=data[0]
@@ -355,9 +355,9 @@ for max_bit_range in [255,8,1]:
 			if k==1:
 				break
 			ppm_final_results=[]
-			for run in xrange(runs):
+			for run in range(runs):
 				results={}
-				for p in xrange(5000):
+				for p in range(5000):
 					samplingDistance = int(random.randint(0,(k-1)))
 					samplingFragment = random.randint(0,num_of_fragments-1)
 					if samplingDistance not in results:
@@ -365,7 +365,7 @@ for max_bit_range in [255,8,1]:
 					results[samplingDistance].add(samplingFragment)
 					if len(results)==k:
 						check=0
-						for key,value in results.iteritems():
+						for key,value in results.items():
 							if len(value)==num_of_fragments:
 								check=check+1
 						if check==k:
