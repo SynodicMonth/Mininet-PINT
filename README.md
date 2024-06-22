@@ -36,35 +36,4 @@ where 5 indicates the length of path.
 
 Generate results using:
 
-`python generate_results.py 5`
-
-where 5 indicates the length of path. The results can be found under final_results/5. There
-will be three files, indicating the average, median and tail number of packets required to conduct
-path tracing for path length of 5. This will also contain results for ASM and PPM techniques.
-
-# Running PINT for delay quantiles
-
-## Requirements
-1. Python 3.7.5
-2. numpy (pip install numpy)
-
-## Setting up Python 3.7.5 in Mininet VM
-
-- Install Miniconda: https://docs.conda.io/en/latest/miniconda.html
-- Create a new Python 3.7.5 environment.
-- Run PINT for delay quantiles in that environment.
-
-## Steps to run PINT for delay quantiles
-
-- Generate delay data obtained from ns3 simulations.
-
-`python generate_delay_data.py file_name`
-
-where file_name is the location of delay data generated from ns3 simulations. A sample
-processed data is present in experiments/delays/processed_data
-
-- Generate results
-
-`python generate_delay_results.py`
-
-This generates the average, median and tail latencies in final_results/delays. 
+`python analyze.py`
